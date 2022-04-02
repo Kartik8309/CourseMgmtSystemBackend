@@ -4,13 +4,14 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start:dev":"nodemon server.js"
+    "start:dev": "nodemon server.js"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "devDependencies": {
-    "nodemon": "^2.0.15"
+    "nodemon": "^2.0.15",
+    "morgan": "^1.10.0"
   },
   "dependencies": {
     "dotenv": "^16.0.0",
