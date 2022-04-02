@@ -15,7 +15,9 @@ const instructorSchema = new mongoose.Schema({
         required:[true,"Please provide a password!"]
     },
     instructorContact:{
-        type:String
+        type:String,
+        minlength:9,
+        maxlength:9
     },
     instructorAddress:{
         type:String

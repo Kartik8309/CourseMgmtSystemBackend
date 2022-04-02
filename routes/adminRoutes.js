@@ -37,4 +37,20 @@ router.get("/allAdmins",async(req,res) => {
     }
 })
 
+router.delete("/deleteAdmin/:id",async(req,res) => {
+    try {
+        const {id} = req.params;
+        await Admin.findByIdAndDelete(id);
+        res.status(204).json({
+            status:"success",
+            data:null
+        })
+    } catch (error) {
+        res.status(404).json({
+            status:"fail",
+            message:error
+        })
+    }
+})
+
 module.exports = router;

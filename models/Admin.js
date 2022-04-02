@@ -16,7 +16,8 @@ const adminSchema = new mongoose.Schema({
     },
     adminContact:{
         type:String,
-        length:9
+        minlength:9,
+        maxlength:9
     },
     adminAddress:{
         type:String  

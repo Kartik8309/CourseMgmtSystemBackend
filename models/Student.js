@@ -17,7 +17,8 @@ const studentSchema = new mongoose.Schema({
     },
     studentContact:{
         type:String,
-        length:9
+        minlength:9,
+        maxlength:9
     },
     studentAge:{
         type:Number
