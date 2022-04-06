@@ -1,5 +1,5 @@
 const mongoose = require("mongoose")
-
+const validator = require("validator")
 
 /* ADD VALIDATOR VIA PACKAGE FOR EMAIL  */
 const studentSchema = new mongoose.Schema({
@@ -9,7 +9,8 @@ const studentSchema = new mongoose.Schema({
     },
     studentEmail:{
         type:String,
-        required:[true,"Please provide a valid email!"]
+        required:[true,"Please provide an email!"],
+        validate:[validator.isEmail , "Please provide a valid email!"]
     },
     studentPassword:{
         type:String,

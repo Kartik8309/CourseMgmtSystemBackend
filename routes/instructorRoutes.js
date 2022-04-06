@@ -1,17 +1,17 @@
 const express = require("express");
 const router = express.Router();
-const Admin = require("../models/Admin");
+const Instructor = require("../models/Instructor");
 
 /* move functions to controller folder */
 
 router.post("/createUser", async (req,res) => {
     //add middle to check for roleType
     try {
-        const newAdmin = await Admin.create(req.body);
+        const newInstructor = await Instructor.create(req.body);
         res.status(201).json({
             status:"success",
             data:{
-                admin:newAdmin
+                admin:newInstructor
             }
         })
     } catch (error) {
@@ -24,11 +24,11 @@ router.post("/createUser", async (req,res) => {
 
 router.get("/allUsers",async(req,res) => {
     try {
-        const allAdmins = await Admin.find();
+        const allInstructors = await Instructor.find();
         res.status(200).json({
             status:"success",
             data:{
-                admins:allAdmins
+                admins:allInstructors
             }
         })
     } catch (error) {
@@ -42,7 +42,7 @@ router.get("/allUsers",async(req,res) => {
 router.delete("/deleteUser/:id",async(req,res) => {
     try {
         const {id} = req.params;
-        await Admin.findByIdAndDelete(id);
+        await Instructor.findByIdAndDelete(id);
         res.status(204).json({
             status:"success",
             data:null
@@ -59,7 +59,7 @@ router.delete("/deleteUser/:id",async(req,res) => {
 router.patch("/updateDetails/:id", async(req,res) => {
     try {
         const {id,body} = req.params;
-        const updatedDetails = await Admin.findByIdAndUpdate(id,body, {
+        const updatedDetails = await Instructor.findByIdAndUpdate(id,body, {
             new:true,
             runValidators:true
         })

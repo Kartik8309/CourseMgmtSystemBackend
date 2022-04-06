@@ -17,7 +17,15 @@ const courseSchema = new mongoose.Schema({
     },
     credits:{
         type:Number
-    }
+    },
+    instructorId:[
+        {
+            type:mongoose.Schema.Types.ObjectId,
+            ref:"Instructor"
+        }
+    ]
 })
 
 const Course = mongoose.model("Course",courseSchema);
+
+module.exports = Course;

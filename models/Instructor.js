@@ -1,10 +1,12 @@
 const mongoose = require("mongoose");
+const validator = require("validator")
 
-/* ADD VALIDATOR VIA PACKAGE FOR EMAIL  */
+/* ADD INSTR TO COURSES ONE TO MANY MAPPING */
 const instructorSchema = new mongoose.Schema({
     instructorEmail:{
         type:String,
-        required:[true,"Please provide a mail!"]
+        required:[true,"Please provide an email!"],
+        validate:[validator.isEmail , "Please provide a valid email!"]
     },
     instructorName:{
         type:String,
