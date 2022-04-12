@@ -4,6 +4,8 @@ const Student = require("../../models/Student");
 exports.signup = async(req,res,next) => {
     try {
         const newStudent = await Student.create(req.body);
+        /* const {studentAge,studentAddress,studentGender} = req.body; role restrictions ?? */
+        
         return res.status(201).json({
             status:"success",
             data:{

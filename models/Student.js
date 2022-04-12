@@ -1,5 +1,6 @@
-const mongoose = require("mongoose")
-const validator = require("validator")
+const mongoose = require("mongoose");
+const validator = require("validator");
+const bcrypt = require("bcryptjs");
 
 const studentSchema = new mongoose.Schema({
     studentName:{
@@ -14,16 +15,18 @@ const studentSchema = new mongoose.Schema({
     studentPassword:{
         type:String,
         required:[true,"Please provide a password"],
-        minlength:[8,"Password must be 8 characters long!"]
+        minlength:[8,"Password must be 8 characters long!"],
+        
     },
     passwordConfirm:{
         type:String,
         required:[true,"Please confirm your password!"],
-        validate:{
+        //works on SAVE and CREATE
+        validate:{ //validate password and confirmPassword fields
             validator:function(elem){
                 return elem === this.studentPassword
             },
-            message:"Passwords do not match!"
+            message:"Passwords do not match!" //send err message
         }
     },
     studentContact:{
@@ -45,5 +48,18 @@ const studentSchema = new mongoose.Schema({
         ref:"Course"
     }]
 })
+
+//pre("save") b/w incoming data and persistence to db
+studentSchema.pre("save", async function(next){
+    if(!this.isModified('studentPassword')){
+        return next();
+    }
+    //only when password changes or created new
+    this.studentPassword = await bcrypt.hash(this.studentPassword,12);
+    //delete confirm password
+    this.passwordConfirm = undefined;
+    next();
+})
+
 const Student = mongoose.model("Student",studentSchema);
 module.exports = Student;
