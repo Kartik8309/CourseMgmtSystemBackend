@@ -3,8 +3,26 @@ const router = express.Router();
 const Admin = require("../models/Admin");
 
 /* move functions to controller folder */
+const checkId = async(req,res,next) => {
+    const {email} = req.body;
+    try {
+        const data = await Admin.find({email:email})
+        if(data[0]){
+            return res.status(400).json({
+                status:"fail",
+                message:`Account with Email ${email} already exists!`
+            })
+        }
+    } catch (error) {
+        return res.status(500).json({
+            status:"fail",
+            message:error
+        })
+    }
+    next();
+}
 
-router.post("/createUser", async (req,res) => {
+router.post("/createUser",checkId, async (req,res) => {
     //add middle to check for roleType
     try {
         const newAdmin = await Admin.create(req.body);
@@ -28,6 +46,7 @@ router.get("/allUsers",async(req,res) => {
         res.status(200).json({
             status:"success",
             data:{
+                length:allAdmins.length,
                 admins:allAdmins
             }
         })

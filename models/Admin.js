@@ -7,7 +7,7 @@ const adminSchema = new mongoose.Schema({
         type:String,
         required:[true,"Please provide a name!"]
     },
-    adminEmail:{
+    email:{
         type:String,
         required:[true,"Please provide an email!"],
         validate:[validator.isEmail , "Please provide a valid email!"]
@@ -16,10 +16,20 @@ const adminSchema = new mongoose.Schema({
         type:String,
         required:[true,"Please provide a password!"]
     },
+    passwordConfirm:{
+        type:String,
+        required:[true,"Please confirm your password!"],
+        validate:{
+            validator:function(elem){
+                return elem === this.adminPassword
+            },
+            message:"Passwords do not match!"
+        }
+    },
     adminContact:{
         type:String,
-        minlength:9,
-        maxlength:9
+        minLength:10,
+        maxLength:10
     },
     adminAddress:{
         type:String  

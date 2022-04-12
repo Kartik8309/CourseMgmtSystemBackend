@@ -10,20 +10,23 @@ const courseSchema = new mongoose.Schema({
     },
     courseCode:{
         type:String,
-        required:true
+        required:[true,"Please provide a course code"]
     },
     enrolledCandidates:{
         type:Number, //COUNT FROM M:N RELTN TABLE BW STUDENTS AND COURSES
+        default:0
     },
     credits:{
         type:Number
     },
-    instructorId:[
-        {
-            type:mongoose.Schema.Types.ObjectId,
-            ref:"Instructor"
-        }
-    ]
+    instructorId:{
+        type:mongoose.Schema.Types.ObjectId,
+        ref:"Instructor"
+    },
+    enrolledStudents:[{
+        type:mongoose.Schema.Types.ObjectId,
+        ref:"Student"
+    }]
 })
 
 const Course = mongoose.model("Course",courseSchema);
