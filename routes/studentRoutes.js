@@ -3,7 +3,7 @@ const router = express.Router();
 const Student = require("../models/Student");
 const Course = require("../models/Course");
 const mongoose = require("mongoose");
-const {signup} = require("../controllers/Auth/studentAuth")
+const {signup, login ,protect} = require("../controllers/Auth/studentAuth")
 /* impl get single student */
 
 const checkId = async(req,res,next) => {
@@ -28,6 +28,24 @@ const checkId = async(req,res,next) => {
 /* move functions to controller folder */
 /* using auth/studentAuth */
 router.post("/signup",checkId,signup);
+router.post("/login",login)
+
+
+router.get("/:studentId",protect,async(req,res) => {
+    try {
+        const {studentId} = req.params;
+        const student = await Student.findById(studentId);
+        return res.status(200).json({
+            status:"success",
+            student
+        })
+    } catch (error) {
+        return res.status(404).json({
+            status:"fail",
+            message:error
+        })
+    }
+})
 
 router.get("/allUsers",async(req,res) => {
     try {
@@ -47,7 +65,8 @@ router.get("/allUsers",async(req,res) => {
     }
 })
 
-router.delete("/deleteUser/:id",async(req,res) => {
+/* add auth using roles so only student or admin can delete acc of student */
+router.delete("/deleteUser/:id",protect,restrictTo("student"),async(req,res) => {
     try {
         const {id} = req.params;
         await Student.findByIdAndDelete(id);
@@ -94,7 +113,7 @@ router.patch("/enroll/:courseId",async(req,res) => {
         const {studentId} = req.body;
         const currCourse = await Course.findById(courseId);
         const student = await Student.findByIdAndUpdate(studentId,{$push:{enrolledInCourses:courseId}},{new:true}).session(session);
-        session.abortTransaction();
+        //session.abortTransaction();
         const course = await Course.findByIdAndUpdate(courseId,{$push:{enrolledStudents:studentId},enrolledCandidates:currCourse.enrolledCandidates+1},{new:true}).session(session);
         await session.commitTransaction();
         res.status(201).json({

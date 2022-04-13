@@ -12,6 +12,10 @@ const studentSchema = new mongoose.Schema({
         required:[true,"Please provide an email!"],
         validate:[validator.isEmail , "Please provide a valid email!"]
     },
+    role:{
+        type:String,
+        enum:['student','admin','instructor'] //allow certain roles only
+    },
     studentPassword:{
         type:String,
         required:[true,"Please provide a password"],
@@ -28,6 +32,9 @@ const studentSchema = new mongoose.Schema({
             },
             message:"Passwords do not match!" //send err message
         }
+    },
+    passwordChangedAt: {
+        type:Date
     },
     studentContact:{
         type:String,
@@ -60,6 +67,22 @@ studentSchema.pre("save", async function(next){
     this.passwordConfirm = undefined;
     next();
 })
+
+//instance methods available to all docs of current model
+studentSchema.methods.correctPassword = async function(reqPassword,userPassword) {
+    return await bcrypt.compare(reqPassword,userPassword);
+}
+
+studentSchema.methods.changedPasswordAfter = function(JWTTimestamp){
+    if(this.passwordChangedAt){
+        const changedTimeStamp = +this.passwordChangedAt.getTime()/1000; //change to seconds format
+        return JWTTimestamp < changedTimeStamp; //100<200
+        //console.log(changedTimeStamp, JWTTimestamp);
+    }
+    return false;//means password never changed
+}
+
+
 
 const Student = mongoose.model("Student",studentSchema);
 module.exports = Student;
