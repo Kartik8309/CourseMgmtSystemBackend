@@ -14,7 +14,8 @@ const studentSchema = new mongoose.Schema({
     },
     role:{
         type:String,
-        enum:['student','admin','instructor'] //allow certain roles only
+        enum:['student','admin','instructor'], //allow certain roles only
+        default:"student"
     },
     studentPassword:{
         type:String,
