@@ -5,7 +5,7 @@ const Student = require("../models/Student");
 const Course = require("../models/Course");
 const {checkId} = require("../utilities/Email/checkStudentEmail")
 const {signup, login ,protect,restrictTo} = require("../controllers/Auth/studentAuth")
-const {getStudent,getAllStudents,deleteStudent,enrollInCourse} = require("../controllers/studentController")
+const {getStudent,getAllStudents,deleteStudent,enrollInCourse,exitFromCourse} = require("../controllers/studentController")
 
 
 /* using auth/studentAuth */
@@ -21,7 +21,13 @@ router.get("/allUsers",getAllStudents)
 router.delete("/deleteUser/:id",protect,restrictTo("admin","student"),deleteStudent)
 
 /* READ TRANSACTIONS IN MONGODB */
-router.patch("/enroll/:courseId",enrollInCourse)
+router.patch("/enroll/:courseId",protect,restrictTo("student"),enrollInCourse)
+
+/* Route for isEnrolled too? */
+
+router.patch("/unenroll/:courseId",protect,restrictTo("student"),exitFromCourse)
+
+router.patch("/updateDetails/password",updatePassword);
 
 /* CHECK ROUTE AGAIN */
 router.patch("/updateDetails/:id", async(req,res) => {
@@ -42,19 +48,6 @@ router.patch("/updateDetails/:id", async(req,res) => {
             status:"fail",
             message:error
         })
-    }
-})
-
-/* Route for isEnrolled too? */
-
-router.patch("/unenroll/:courseId",async(req,res) => {
-    const session = await mongoose.startSession();
-    try {
-        session.startTransaction();
-        const {courseId} = req.params;
-
-    } catch (error) {
-        
     }
 })
 

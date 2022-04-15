@@ -2,8 +2,7 @@ const Admin = require("../models/Admin")
 
 exports.getAdminDetails = async(req,res) => {
     try {
-        const {adminId} = req.params;
-        const admin = await Admin.findById(adminId);
+        const {admin} = req;
         return res.status(200).json({
             status:"success",
             admin

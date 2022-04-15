@@ -3,7 +3,7 @@ const router = express.Router();
 const Course = require("../models/Course");
 const Instructor = require("../models/Instructor");
 
-const checkInstructorId = async(req,res,next) => {
+/* const checkInstructorId = async(req,res,next) => {
     try {
         const {instructorId} = req.body;
         const instructor = await Instructor.findById(instructorId);
@@ -16,27 +16,9 @@ const checkInstructorId = async(req,res,next) => {
         })
     }
     next();
-}
+} */
 
-router.post("/createCourse",checkInstructorId, async (req,res) => {
-    try {
-        const newCourse = await Course.create(req.body);
-        const {instructor} = req;
-        await instructor.updateOne({$push:{coursesAssigned:newCourse._id}}) 
-        console.log(instructor);
-        return res.status(201).json({
-            status:"success",
-            data:{
-                course:newCourse
-            }
-        })
-    } catch (error) {
-        res.status(404).json({
-            status:"fail",
-            message:error
-        })
-    }
-})
+/* router.post("/createCourse",protect,restrictTo("instructor"), ) */ //Inside instructorController
 
 router.get("/allCourses",async(req,res) => {
     try {
@@ -74,7 +56,7 @@ router.get("/:id/getInstructor",async(req,res) => {
     }
 })
 
-router.delete("/deleteCourse/:id",async(req,res) => {
+/* router.delete("/deleteCourse/:id",async(req,res) => {
     try {
         const {id} = req.params;
         await Course.findByIdAndDelete(id);
@@ -88,7 +70,7 @@ router.delete("/deleteCourse/:id",async(req,res) => {
             message:error
         })
     }
-})
+}) */
 
 /* CHECK ROUTE AGAIN */
 router.patch("/updateDetails/:id", async(req,res) => {
