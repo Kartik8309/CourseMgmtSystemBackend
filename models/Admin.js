@@ -1,13 +1,13 @@
 const mongoose = require("mongoose");
 const validator = require("validator");
-
+const bcrypt = require("bcryptjs")
 /* ADD VALIDATOR VIA PACKAGE FOR EMAIL  */
 const adminSchema = new mongoose.Schema({
     adminName:{
         type:String,
         required:[true,"Please provide a name!"]
     },
-    email:{
+    adminEmail:{
         type:String,
         required:[true,"Please provide an email!"],
         validate:[validator.isEmail , "Please provide a valid email!"]

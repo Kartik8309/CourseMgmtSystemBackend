@@ -21,11 +21,12 @@ const studentSchema = new mongoose.Schema({
         type:String,
         required:[true,"Please provide a password"],
         minlength:[8,"Password must be 8 characters long!"],
-        
+        select:false
     },
     passwordConfirm:{
         type:String,
         required:[true,"Please confirm your password!"],
+        select:false,
         //works on SAVE and CREATE
         validate:{ //validate password and confirmPassword fields
             validator:function(elem){
@@ -51,6 +52,14 @@ const studentSchema = new mongoose.Schema({
     studentGender:{
         type:String
     },
+    active:{
+        type:Boolean,
+        default:true,
+        select:false
+    },
+    profilePicture:{
+        type:String
+    },
     enrolledInCourses:[{
         type:mongoose.Schema.Types.ObjectId,
         ref:"Course"
@@ -69,11 +78,19 @@ studentSchema.pre("save", async function(next){
     next();
 })
 
+/* queries starting with find */
+studentSchema.pre("/^find",async function(next){
+    //this refers to current query
+    this.find({active: {$ne : false}});
+    next();
+})
+
 //instance methods available to all docs of current model
 studentSchema.methods.correctPassword = async function(reqPassword,userPassword) {
     return await bcrypt.compare(reqPassword,userPassword);
 }
 
+//check again
 studentSchema.methods.changedPasswordAfter = function(JWTTimestamp){
     if(this.passwordChangedAt){
         const changedTimeStamp = +this.passwordChangedAt.getTime()/1000; //change to seconds format

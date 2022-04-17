@@ -1,6 +1,7 @@
 const Instructor = require("../models/Instructor");
 const Course = require("../models/Course")
 const mongoose = require("mongoose");
+const Feedback = require("../models/Feedback")
 
 exports.checkInstructorExists = async(req,res,next) => {
     try {
@@ -140,3 +141,85 @@ exports.deleteCourse = async(req,res) => {
         })
     }
 }
+
+exports.giveFeedback = async(req,res,next) =>{
+    const session = await mongoose.startSession();
+    try {
+        session.startTransaction();
+        const {instructor} = req;
+        const {feedbackMessage} = req.body;
+        if(feedbackMessage===""){
+            return res.status(400).json({
+                status:"fail",
+                message:"Please enter a valid feedback!"
+            })
+        }
+        const feedbackObj ={
+            ...req.body,
+            feedBackDate:Date.now(),
+            FeedbackTo:req.params.studentId,
+            FeedbackBy:instructor._id
+        }
+        //console.log(typeof(req.params.studentId),typeof(instructor._id) )
+        const feedback = await Feedback.create(feedbackObj);
+        //await Instructor.findByIdAndUpdate(instructor._id,{$push:{feedBacksGiven:feedback._id}},{new:true}).session(session);
+        session.commitTransaction();
+        return res.status(200).json({
+            status:"success",
+            data:{
+                feedback
+            }
+        })
+
+    } catch (error) {
+        session.abortTransaction();
+        return res.status(404).json({
+            message:error
+        })
+    }
+}
+
+exports.deleteFeedback = async(req,res) => {
+    try {
+        const {instructor} = req;
+        const studentId = req.params;
+        await Feedback.findOneAndDelete({$and:[{studentId:studentId},{instructorId:instructor._id}]});
+        return res.status(204).json({
+            success:"true",
+            data:null
+        })
+    } catch (error) {
+        console.log(error)
+        return res.status(404).json({
+            success:"fail",
+            message:error
+        })
+    }
+}
+
+/* 
+
+    const {instructor} = req;
+    const {feedbackMessage} = req.body;
+    if(feedbackMessage===""){
+        return res.status(400).json({
+            status:"fail",
+            message:"Please enter a valid feedback!"
+        })
+    }
+    //console.log(feedbackMessage)
+    //make it transaction and add feedbackId to instructor as well as student
+    const feedbackObj ={
+        ...req.body,
+        feedBackDate:Date.now(),
+        studentId:req.params.studentId,
+        instructorId:instructor._id
+    }
+    const feedback = await Feedback.create(feedbackObj);
+    return res.status(200).json({
+        status:"success",
+        data:{
+            feedback
+        }
+    })
+*/

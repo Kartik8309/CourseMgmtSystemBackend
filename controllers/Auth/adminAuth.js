@@ -1,4 +1,14 @@
 const Admin = require("../../models/Admin")
+const jwt = require("jsonwebtoken");
+const {promisify} = require("util")
+require("dotenv")
+
+const signToken = id => {
+    return jwt.sign({id:id},process.env.JWT_SECRET,{
+        expiresIn:process.env.JWT_EXPIRES_IN
+    });
+}
+
 
 exports.signup = async(req,res,next) => {
     try {
@@ -30,8 +40,8 @@ exports.login = async(req,res,next) => {
         })
     }
 
-    const admin = await Admin.findOne({email:email}).select('+adminPassword');
-
+    const admin = await Admin.findOne({adminEmail:email}).select('+adminPassword');
+    //console.log(admin);
     if(!admin || !await admin.correctPassword(adminPassword,admin.adminPassword)){
         return res.status(401).json({ //401 -> unauthorised
             status:"fail",
@@ -54,7 +64,7 @@ exports.protect = async(req,res,next) => {
         //console.log(req.headers);
         if(req.headers.authorization && req.headers.authorization.startsWith("Bearer")){
             token = req.headers.authorization.split(" ")[1];
-            //console.log(token);
+            console.log(token);
             
         }
         
@@ -77,6 +87,7 @@ exports.protect = async(req,res,next) => {
 
         try {
             admin = await Admin.findById(payload.id)
+            //console.log(admin);
             if(!admin){
                 throw new Error(); //throw error if user doesn't exists
             }
@@ -107,6 +118,7 @@ exports.protect = async(req,res,next) => {
 
 exports.restrictTo=(...roles) => {
     return (req,res,next) => {
+        //console.log(req);
         //roles = ["admin","student"]
         //have access to req.student as protect runs before restrictTo()
         if(!roles.includes(req.admin.role)){ 

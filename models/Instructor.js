@@ -43,10 +43,10 @@ const instructorSchema = new mongoose.Schema({
     instructorAddress:{
         type:String
     },
-    /* instructorId:{
+    feedBacksGiven:[{
         type:mongoose.Schema.Types.ObjectId,
-        ref:"Course"
-    }, */
+        ref:"Feedback"
+    }],
     coursesAssigned:[
         {
             type:mongoose.Schema.Types.ObjectId,

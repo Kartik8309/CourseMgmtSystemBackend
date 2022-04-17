@@ -3,18 +3,20 @@ const router = express.Router();
 const Admin = require("../models/Admin");
 const {checkId} = require("../utilities/Email/checkAdminEmail")
 const {login,signup,protect,restrictTo} = require("../controllers/Auth/adminAuth")
-const {getAdminDetails,deleteAdmin,getAllAdmins} = require("../controllers/adminController")
+const {getAdminDetails,deleteAdmin,getAllAdmins,createAdmin,deleteStudent} = require("../controllers/adminController")
 
 /* DO -> only admin can create another admin */
-router.post("/signup",checkId, signup);
+router.post("/createAdmin",protect,restrictTo("admin"),checkId,createAdmin);
 
-router.post("/login",login);
+router.post("/login",login); //may change
 
-router.get("/:adminId",protect,getAdminDetails);
+router.get("/:adminId",protect,restrictTo("admin"),getAdminDetails);
 
-router.get("/allUsers",getAllAdmins);
+router.get("/allUsers",restrictTo("admin"),getAllAdmins);
 
 router.delete("/deleteUser/:id",protect,restrictTo("admin"),deleteAdmin);
+
+router.delete("/deleteStudent",protect,restrictTo("admin"),deleteStudent);
 
 /* CHECK ROUTE AGAIN */
 router.patch("/updateDetails/:id", async(req,res) => {
